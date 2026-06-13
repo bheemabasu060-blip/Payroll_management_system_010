@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Static Demo - Payroll Management System</title>
+    <style>
+        /* Embedded CSS to make it completely self-contained for easy double-click execution */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f0c20 0%, #15102a 50%, #06040a 100%);
+            --card-bg: rgba(25, 20, 45, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-glow: rgba(147, 51, 234, 0.15);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --primary-hover: #a78bfa;
+            --secondary: #10b981;
+            --secondary-hover: #34d399;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --danger-hover: #f87171;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --sidebar-width: 280px;
+            --transition-speed: 0.3s;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(10, 8, 20, 0.7);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--card-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+        .sidebar-logo span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sidebar-menu li {
+            cursor: pointer;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 12px;
+            transition: all var(--transition-speed) ease;
+            border: 1px solid transparent;
+        }
+        .sidebar-menu li.active a, .sidebar-menu a:hover {
+            color: #fff;
+            background: var(--card-bg);
+            border-color: var(--card-border);
+            box-shadow: 0 4px 15px var(--card-glow);
+            transform: translateX(5px);
+        }
+        .sidebar-menu svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+        .sidebar-menu li.active svg, .sidebar-menu a:hover svg {
+            color: var(--primary);
+        }
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+        }
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: #fff;
+        }
+        .page-subtitle {
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-size: 0.95rem;
+        }
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 12px 40px var(--card-glow);
+        }
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+        }
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed) ease;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        select.form-control option {
+            background: #15102a;
+            color: #fff;
+        }
+        /* Tables */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            margin-bottom: 45px;
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .custom-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 18px 24px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .custom-table td {
+            padding: 16px 24px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+        .custom-table tr:hover {
+            background: rgba(139, 92, 246, 0.04);
+        }
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border: none;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #047857);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+        /* Alert Notifications */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            display: none; /* Controlled by JS */
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .badge {
+            display: inline-flex;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .badge-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        /* Query Explorer CSS */
+        .query-tab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .query-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        .query-btn.active, .query-btn:hover {
+            background: var(--card-bg);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px var(--card-glow);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .query-btn span {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        .query-code {
+            background: rgba(5, 3, 10, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #c084fc;
+            margin-bottom: 25px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        /* Printable payslip markup */
+        .salary-invoice {
+            background: #fff;
+            color: #1f2937;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 30px;
+        }
+        .invoice-header {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .invoice-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+        .invoice-meta {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .invoice-details h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .invoice-table th {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 2px solid #e5e7eb;
+            color: #4b5563;
+        }
+        .invoice-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .invoice-total {
+            text-align: right;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary);
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            font-family: 'Outfit', sans-serif;
+        }
+        /* Hide sections */
+        .section-view {
+            display: none;
+        }
+        .section-view.active {
+            display: block;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 992px) {
+            .sidebar { width: 70px; padding: 20px 10px; }
+            .sidebar-logo span, .sidebar-menu a span { display: none; }
+            .main-content { margin-left: 70px; width: calc(100% - 70px); padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Static Navigation Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>Payroll<span style="color:#10b981;">Sys</span></span>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" onclick="switchSection('dashboard', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item" onclick="switchSection('insert', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>Insert Records</span>
+                </a>
+            </li>
+            <li class="menu-item" onclick="switchSection('update', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>
+                    <span>Update Records</span>
+                </a>
+            </li>
+            <li class="menu-item" onclick="switchSection('delete', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    <span>Delete Records</span>
+                </a>
+            </li>
+            <li class="menu-item" onclick="switchSection('display', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <span>Display & Queries</span>
+                </a>
+            </li>
+            <li class="menu-item" onclick="switchSection('procedures', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span>Stored Procedures</span>
+                </a>
+            </li>
+            <li class="menu-item" onclick="switchSection('triggers', this)">
+                <a>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <span>Trigger Demo</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content Panel -->
+    <div class="main-content">
+        
+        <!-- Alerts Area -->
+        <div id="demo-alert" class="alert">
+            <span id="alert-icon">✔</span>
+            <span id="alert-text">Placeholder alert message.</span>
+        </div>
+        <!-- ==========================================
+             SECTION 1: DASHBOARD
+             ========================================== -->
+        <div id="section-dashboard" class="section-view active">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Static UI Dashboard</h1>
+                    <p class="page-subtitle">Interactive frontend mockup of the Payroll Management System (Runs without server!).</p>
+                </div>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Total Employees</div>
+                    <div class="card-value" id="stat-employees">5</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Departments</div>
+                    <div class="card-value">5</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Salaries Generated</div>
+                    <div class="card-value" id="stat-salaries">5</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Total Disbursed</div>
+                    <div class="card-value">₹244,000.00</div>
+                </div>
+            </div>
+            <div class="card" style="line-height: 1.6;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #fff; margin-bottom: 15px;">Frontend Demo Description</h2>
+                <p style="color: var(--text-muted); margin-bottom: 10px;">
+                    This file is a standalone <strong>HTML/CSS/JS frontend demonstration</strong>. It mimics all the core features of the system including inserting, updating, and deleting rows, running procedures, and visualizing triggers.
+                </p>
+                <p style="color: var(--text-muted);">
+                    Navigate using the left sidebar to test the CRUD operations in memory. The data you insert or modify will update instantly on the screen!
+                </p>
+            </div>
+        </div>
+        <!-- ==========================================
+             SECTION 2: INSERT OPERATION
+             ========================================== -->
+        <div id="section-insert" class="section-view">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Insert Operations</h1>
+                    <p class="page-subtitle">Demonstrate CRUD (Create) by appending rows to our simulated database.</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title" style="color:#fff; font-size:1.3rem; margin-bottom: 20px;">Insert New Employee</h3>
+                <form id="insert-employee-form" onsubmit="handleInsert(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Employee Name *</label>
+                            <input type="text" id="ins-name" class="form-control" placeholder="Enter full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="text" id="ins-phone" class="form-control" placeholder="e.g. 9876543210" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Department *</label>
+                            <select id="ins-dept" class="form-control" required>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Human Resources">Human Resources</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Designation *</label>
+                            <input type="text" id="ins-desg" class="form-control" placeholder="e.g. Tech Lead" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Joining Date *</label>
+                            <input type="date" id="ins-date" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Insert Row</button>
+                </form>
+            </div>
+        </div>
+        <!-- ==========================================
+             SECTION 3: UPDATE OPERATION
+             ========================================== -->
+        <div id="section-update" class="section-view">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Update Operations</h1>
+                    <p class="page-subtitle">Demonstrate CRUD (Update) by modifying existing items.</p>
+                </div>
+            </div>
+            <!-- Prepopulated Form when edit is triggered -->
+            <div id="update-form-container" class="card" style="display: none; margin-bottom: 30px; border-color: var(--primary);">
+                <h3 class="card-title" style="color: #fff; font-size: 1.2rem; margin-bottom: 20px;">Edit Employee Details</h3>
+                <form id="edit-employee-form" onsubmit="handleUpdateSave(event)">
+                    <input type="hidden" id="edit-index">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Employee Name</label>
+                            <input type="text" id="edit-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Designation</label>
+                            <input type="text" id="edit-desg" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="text" id="edit-phone" class="form-control" required>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-danger" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="update-table-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- ==========================================
+             SECTION 4: DELETE OPERATION
+             ========================================== -->
+        <div id="section-delete" class="section-view">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Delete Operations</h1>
+                    <p class="page-subtitle">Demonstrate CRUD (Delete) by removing records from view.</p>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="delete-table-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- ==========================================
+             SECTION 5: DISPLAY RECORDS & SQL QUERIES
+             ========================================== -->
+        <div id="section-display" class="section-view">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Display & SQL Queries</h1>
+                    <p class="page-subtitle">Inspect simulated tables or trigger the 10 custom database queries.</p>
+                </div>
+            </div>
+            <div class="query-tab-grid">
+                <button class="query-btn active" id="qbtn-1" onclick="runStaticQuery(1)">
+                    <span>Query 1</span>
+                    <small>Retrieve all employee details</small>
+                </button>
+                <button class="query-btn" id="qbtn-3" onclick="runStaticQuery(3)">
+                    <span>Query 3</span>
+                    <small>Inner Join (Employee + Payroll)</small>
+                </button>
+                <button class="query-btn" id="qbtn-5" onclick="runStaticQuery(5)">
+                    <span>Query 5</span>
+                    <small>Count Employees per Dept</small>
+                </button>
+                <button class="query-btn" id="qbtn-7" onclick="runStaticQuery(7)">
+                    <span>Query 7</span>
+                    <small>Salary > Average (Subquery)</small>
+                </button>
+                <button class="query-btn" id="qbtn-10" onclick="runStaticQuery(10)">
+                    <span>Query 10</span>
+                    <small>Empty Departments (NOT EXISTS)</small>
+                </button>
+            </div>
+            <div class="card" id="query-result-card" style="display: none; border-color: var(--primary);">
+                <h3 class="card-title" id="query-title">Query Details</h3>
+                <h4 style="color: var(--primary); font-size:0.85rem; margin-bottom: 5px;">SQL CODE STATEMENT:</h4>
+                <pre class="query-code" id="query-code-block"></pre>
+                
+                <h4 style="color: var(--secondary); font-size:0.85rem; margin-bottom: 15px;">SIMULATED DATASET RESULT:</h4>
+                <div class="table-container" style="margin-bottom: 0;">
+                    <table class="custom-table">
+                        <thead id="query-th">
+                            <!-- Filled dynamically -->
+                        </thead>
+                        <tbody id="query-tb">
+                            <!-- Filled dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ==========================================
+             SECTION 6: STORED PROCEDURES
+             ========================================== -->
+        <div id="section-procedures" class="section-view">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Stored Procedures</h1>
+                    <p class="page-subtitle">Demonstrate calculations and pay slip invoice generation.</p>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <!-- Call CalculatePayroll -->
+                <div class="card">
+                    <h3 class="card-title" style="color:#fff;">1. Execute <code>CalculatePayroll</code></h3>
+                    <form onsubmit="executeCalcPayroll(event)">
+                        <div class="form-group">
+                            <label class="form-label">Employee</label>
+                            <select id="sp-emp" class="form-control">
+                                <!-- Filled by JS -->
+                            </select>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Basic Salary (₹)</label>
+                                <input type="number" id="sp-basic" class="form-control" value="55000" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Bonus (₹)</label>
+                                <input type="number" id="sp-bonus" class="form-control" value="5000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Deduction (₹)</label>
+                            <input type="number" id="sp-ded" class="form-control" value="1000">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">CALL CalculatePayroll</button>
+                    </form>
+                </div>
+                <!-- Call GetSalaryReport -->
+                <div class="card">
+                    <h3 class="card-title" style="color:#fff;">2. Execute <code>GetSalaryReport</code></h3>
+                    <form onsubmit="generateInvoice(event)">
+                        <div class="form-group" style="margin-bottom: 35px;">
+                            <label class="form-label">Select Employee</label>
+                            <select id="invoice-emp" class="form-control">
+                                <!-- Filled by JS -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-secondary" style="width: 100%;">CALL GetSalaryReport</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Dynamic Invoice Popup -->
+            <div id="invoice-display" style="display: none;">
+                <div class="salary-invoice">
+                    <div class="invoice-header">
+                        <div>
+                            <h2 class="invoice-title">Corporate Pay Slip</h2>
+                            <p style="font-size:0.9rem; color:#6b7280;" id="invoice-dept">Engineering Department</p>
+                        </div>
+                        <div class="invoice-meta">
+                            <h3 style="color:#111827;" id="invoice-name">Aravind Kumar</h3>
+                            <span>Employee ID: <strong id="invoice-id">1</strong></span>
+                        </div>
+                    </div>
+                    <div class="invoice-details">
+                        <div>
+                            <h4>Attendance Sheet</h4>
+                            <p>Month: <strong>June</strong></p>
+                            <p>Working Days: <strong>28 Days</strong></p>
+                            <p style="color:#b91c1c;">Leaves: <strong>2 Days</strong></p>
+                        </div>
+                        <div>
+                            <h4>Transaction Summary</h4>
+                            <p>Status: <span class="badge badge-emerald">Disbursed</span></p>
+                            <p>Method: <strong>Bank Transfer</strong></p>
+                        </div>
+                    </div>
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Earnings Detail</th>
+                                <th style="text-align: right;">Amount (INR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Basic Base Pay</td>
+                                <td style="text-align: right;" id="invoice-td-basic">₹80,000.00</td>
+                            </tr>
+                            <tr>
+                                <td>Bonus Incentives</td>
+                                <td style="text-align: right; color:#047857;" id="invoice-td-bonus">+ ₹10,000.00</td>
+                            </tr>
+                            <tr>
+                                <td>Deductions / Penalties</td>
+                                <td style="text-align: right; color:#b91c1c;" id="invoice-td-ded">- ₹1,000.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="invoice-total" id="invoice-td-net">
+                        Net Take-home: ₹89,000.00
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ==========================================
+             SECTION 7: TRIGGERS DEMONSTRATION
+             ========================================== -->
+        <div id="section-triggers" class="section-view">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Triggers Simulator</h1>
+                    <p class="page-subtitle">Demonstrate live automated database constraints and callbacks.</p>
+                </div>
+            </div>
+            <!-- Trigger 1 -->
+            <div class="card" style="margin-bottom: 30px;">
+                <h3 class="card-title" style="color:#fff;">1. AFTER UPDATE Trigger (Auto-calculate salary deductions)</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px; line-height: 1.5;">
+                    Change an employee's leave days below. The trigger automatically runs a formula <code>deduction = leave_days * 500</code> and updates the matching payroll card.
+                </p>
+                <div class="form-grid" style="align-items: flex-end;">
+                    <div class="form-group">
+                        <label class="form-label">Select Employee Sheet</label>
+                        <select id="t1-emp" class="form-control">
+                            <!-- Filled by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Leave Days</label>
+                        <input type="number" id="t1-leaves" class="form-control" value="5" min="0" max="30">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="fireTrigger1()">Update Leaves & Fire Trigger</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Trigger 2 -->
+            <div class="card">
+                <h3 class="card-title" style="color:#fff;">2. BEFORE INSERT Trigger (Block Duplicate Salary Records)</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px; line-height: 1.5;">
+                    Click the button below to simulate inserting a salary record for Aravind Kumar for June 2026. Since a record already exists, the database trigger intercepts the insert query and returns a custom constraint violation exception.
+                </p>
+                <button class="btn btn-danger" onclick="fireTrigger2()">Force Insert Duplicate Payroll</button>
+            </div>
+        </div>
+    </div>
+    <!-- JS Simulations Code -->
+    <script>
+        // Seed Database In-Memory
+        let employees = [
+            { emp_id: 1, name: "Aravind Kumar", phone: "9876543210", designation: "Senior Software Engineer", department: "Engineering", basic: 80000, bonus: 10000, deduction: 1000, net: 89000 },
+            { emp_id: 2, name: "Bhavana Reddy", phone: "9123456789", designation: "QA Lead", department: "Engineering", basic: 60000, bonus: 5000, deduction: 500, net: 64500 },
+            { emp_id: 3, name: "Chandra Sekhar", phone: "8765432109", designation: "HR Manager", department: "Human Resources", basic: 50000, bonus: 4000, deduction: 1500, net: 52500 },
+            { emp_id: 4, name: "Divya Sharma", phone: "7654321098", designation: "Sales Executive", department: "Sales", basic: 35000, bonus: 3000, deduction: 0, net: 38000 },
+            { emp_id: 5, name: "Eshwar Rao", phone: "6543210987", designation: "Marketing Specialist", department: "Marketing", basic: 40000, bonus: 2000, deduction: 2500, net: 39500 }
+        ];
+        // Page Router
+        function switchSection(sectionId, element) {
+            // Remove active classes
+            document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            // Set active
+            document.getElementById('section-' + sectionId).classList.add('active');
+            element.classList.add('active');
+            
+            // Trigger specific page renders
+            if (sectionId === 'update') renderUpdateTable();
+            if (sectionId === 'delete') renderDeleteTable();
+            if (sectionId === 'procedures') populateProceduresDropdowns();
+            if (sectionId === 'triggers') populateTriggersDropdowns();
+        }
+        // Display Alerts
+        function showAlert(text, type) {
+            const box = document.getElementById('demo-alert');
+            const icon = document.getElementById('alert-icon');
+            const label = document.getElementById('alert-text');
+            
+            box.style.display = 'flex';
+            box.className = 'alert alert-' + type;
+            icon.innerText = type === 'success' ? '✔' : '⚠';
+            label.innerHTML = text;
+            // Auto dismiss
+            setTimeout(() => {
+                box.style.display = 'none';
+            }, 5000);
+        }
+        // ==========================================
+        // INSERT SIMULATION
+        // ==========================================
+        function handleInsert(event) {
+            event.preventDefault();
+            const name = document.getElementById('ins-name').value;
+            const phone = document.getElementById('ins-phone').value;
+            const dept = document.getElementById('ins-dept').value;
+            const desg = document.getElementById('ins-desg').value;
+            
+            const newEmp = {
+                emp_id: employees.length + 1,
+                name: name,
+                phone: phone,
+                designation: desg,
+                department: dept,
+                basic: 45000,
+                bonus: 2000,
+                deduction: 500,
+                net: 46500
+            };
+            employees.push(newEmp);
+            
+            // Update Stats
+            document.getElementById('stat-employees').innerText = employees.length;
+            
+            showAlert(`Employee <strong>${name}</strong> inserted successfully in database!`, 'success');
+            document.getElementById('insert-employee-form').reset();
+        }
+        // ==========================================
+        // UPDATE SIMULATION
+        // ==========================================
+        function renderUpdateTable() {
+            const tbody = document.getElementById('update-table-body');
+            tbody.innerHTML = '';
+            employees.forEach((emp, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${emp.emp_id}</td>
+                        <td style="font-weight: 600; color:#fff;">${emp.name}</td>
+                        <td>${emp.designation}</td>
+                        <td><span class="badge badge-purple">${emp.department}</span></td>
+                        <td>${emp.phone}</td>
+                        <td><button class="btn btn-primary btn-sm" onclick="triggerEdit(${index})">Edit</button></td>
+                    </tr>
+                `;
+            });
+        }
+        function triggerEdit(index) {
+            const emp = employees[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('edit-name').value = emp.name;
+            document.getElementById('edit-desg').value = emp.designation;
+            document.getElementById('edit-phone').value = emp.phone;
+            document.getElementById('update-form-container').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function cancelEdit() {
+            document.getElementById('update-form-container').style.display = 'none';
+        }
+        function handleUpdateSave(event) {
+            event.preventDefault();
+            const index = document.getElementById('edit-index').value;
+            employees[index].name = document.getElementById('edit-name').value;
+            employees[index].designation = document.getElementById('edit-desg').value;
+            employees[index].phone = document.getElementById('edit-phone').value;
+            
+            document.getElementById('update-form-container').style.display = 'none';
+            renderUpdateTable();
+            showAlert('Employee row details updated successfully!', 'success');
+        }
+        // ==========================================
+        // DELETE SIMULATION
+        // ==========================================
+        function renderDeleteTable() {
+            const tbody = document.getElementById('delete-table-body');
+            tbody.innerHTML = '';
+            employees.forEach((emp, index) => {
+                tbody.innerHTML += `
+                    <tr id="row-del-${index}">
+                        <td>${emp.emp_id}</td>
+                        <td style="font-weight: 600; color:#fff;">${emp.name}</td>
+                        <td>${emp.designation}</td>
+                        <td><span class="badge badge-purple">${emp.department}</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteEmp(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        function deleteEmp(index) {
+            if (confirm(`Are you sure you want to delete ${employees[index].name}? This will trigger cascade deletions of their payroll & attendance!`)) {
+                showAlert(`Employee <strong>${employees[index].name}</strong> deleted! (Cascade rules deleted matching records in Payroll and Attendance).`, 'success');
+                employees.splice(index, 1);
+                
+                // Update stats
+                document.getElementById('stat-employees').innerText = employees.length;
+                renderDeleteTable();
+            }
+        }
+        // ==========================================
+        // QUERY SIMULATION
+        // ==========================================
+        const staticQueries = {
+            1: {
+                title: "1. Retrieve all employee details",
+                sql: "SELECT emp_id, employee_name, phone, designation, joining_date FROM Employee;",
+                headers: ["emp_id", "employee_name", "phone", "designation"],
+                data: () => employees.map(e => [e.emp_id, e.name, e.phone, e.designation])
+            },
+            3: {
+                title: "3. Display employee and payroll details (2-table INNER JOIN)",
+                sql: "SELECT e.emp_id, e.employee_name, p.basic_salary, p.net_salary \nFROM Employee e \nINNER JOIN Payroll p ON e.emp_id = p.emp_id;",
+                headers: ["emp_id", "employee_name", "basic_salary", "net_salary"],
+                data: () => employees.map(e => [e.emp_id, e.name, "₹" + e.basic.toLocaleString(), "₹" + e.net.toLocaleString()])
+            },
+            5: {
+                title: "5. Count employees per department (GROUP BY)",
+                sql: "SELECT department_name, COUNT(emp_id) AS total_employees \nFROM Department GROUP BY department_name;",
+                headers: ["department_name", "total_employees"],
+                data: () => {
+                    let counts = {};
+                    employees.forEach(e => counts[e.department] = (counts[e.department] || 0) + 1);
+                    return Object.entries(counts);
+                }
+            },
+            7: {
+                title: "7. Retrieve employees whose total salary exceeds average salary (Subquery)",
+                sql: "SELECT e.employee_name, p.net_salary FROM Employee e \nJOIN Payroll p ON e.emp_id = p.emp_id \nWHERE p.net_salary > (SELECT AVG(net_salary) FROM Payroll);",
+                headers: ["employee_name", "net_salary"],
+                data: () => {
+                    let avg = employees.reduce((acc, curr) => acc + curr.net, 0) / employees.length;
+                    return employees.filter(e => e.net > avg).map(e => [e.name, "₹" + e.net.toLocaleString()]);
+                }
+            },
+            10: {
+                title: "10. Retrieve departments that have no employees assigned (NOT EXISTS)",
+                sql: "SELECT d.department_name FROM Department d \nWHERE NOT EXISTS (SELECT 1 FROM Employee e WHERE e.department_id = d.department_id);",
+                headers: ["department_name"],
+                data: () => [["Finance"]] // Hardcoded department without matching employees
+            }
+        };
+        function runStaticQuery(id) {
+            document.querySelectorAll('.query-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('qbtn-' + id).classList.add('active');
+            const queryObj = staticQueries[id];
+            document.getElementById('query-title').innerText = queryObj.title;
+            document.getElementById('query-code-block').innerText = queryObj.sql;
+            
+            // Render Headers
+            const thr = document.getElementById('query-th');
+            thr.innerHTML = '<tr>' + queryObj.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+            // Render Rows
+            const tby = document.getElementById('query-tb');
+            tby.innerHTML = '';
+            const dataRows = queryObj.data();
+            dataRows.forEach(row => {
+                tby.innerHTML += '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+            });
+            document.getElementById('query-result-card').style.display = 'block';
+        }
+        // ==========================================
+        // STORED PROCEDURES SIMULATION
+        // ==========================================
+        function populateProceduresDropdowns() {
+            const spEmp = document.getElementById('sp-emp');
+            const invEmp = document.getElementById('invoice-emp');
+            spEmp.innerHTML = '';
+            invEmp.innerHTML = '';
+            employees.forEach(e => {
+                spEmp.innerHTML += `<option value="${e.emp_id}">${e.name}</option>`;
+                invEmp.innerHTML += `<option value="${e.emp_id}">${e.name}</option>`;
+            });
+        }
+        function executeCalcPayroll(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('sp-emp').value);
+            const basic = parseFloat(document.getElementById('sp-basic').value);
+            const bonus = parseFloat(document.getElementById('sp-bonus').value);
+            const ded = parseFloat(document.getElementById('sp-ded').value);
+            const net = basic + bonus - ded;
+            // Find and update index in memory
+            const idx = employees.findIndex(e => e.emp_id === id);
+            if (idx !== -1) {
+                employees[idx].basic = basic;
+                employees[idx].bonus = bonus;
+                employees[idx].deduction = ded;
+                employees[idx].net = net;
+            }
+            showAlert(`Stored Procedure executed!<br>Payroll computed: Basic ${basic} + Bonus ${bonus} - Deduction ${ded} = <strong>Net ₹${net.toLocaleString()}</strong>`, 'success');
+        }
+        function generateInvoice(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('invoice-emp').value);
+            const emp = employees.find(e => e.emp_id === id);
+            if (!emp) return;
+            document.getElementById('invoice-name').innerText = emp.name;
+            document.getElementById('invoice-id').innerText = emp.emp_id;
+            document.getElementById('invoice-dept').innerText = emp.department + " Department";
+            
+            document.getElementById('invoice-td-basic').innerText = "₹" + emp.basic.toLocaleString() + ".00";
+            document.getElementById('invoice-td-bonus').innerText = "+ ₹" + emp.bonus.toLocaleString() + ".00";
+            document.getElementById('invoice-td-ded').innerText = "- ₹" + emp.deduction.toLocaleString() + ".00";
+            document.getElementById('invoice-td-net').innerText = "Net Take-home: ₹" + emp.net.toLocaleString() + ".00";
+            
+            document.getElementById('invoice-display').style.display = 'block';
+        }
+        // ==========================================
+        // TRIGGERS SIMULATION
+        // ==========================================
+        function populateTriggersDropdowns() {
+            const t1 = document.getElementById('t1-emp');
+            t1.innerHTML = '';
+            employees.forEach(e => {
+                t1.innerHTML += `<option value="${e.emp_id}">${e.name} (ID: ${e.emp_id})</option>`;
+            });
+        }
+        function fireTrigger1() {
+            const id = parseInt(document.getElementById('t1-emp').value);
+            const leaves = parseInt(document.getElementById('t1-leaves').value);
+            const emp = employees.find(e => e.emp_id === id);
+            if (!emp) return;
+            const oldNet = emp.net;
+            const oldDed = emp.deduction;
+            // Trigger action: deduction = leaves * 500
+            const newDed = leaves * 500;
+            const newNet = emp.basic + emp.bonus - newDed;
+            // Save in DB
+            emp.deduction = newDed;
+            emp.net = newNet;
+            showAlert(`<strong>Trigger 'AfterAttendanceUpdate' Fired!</strong><br>• Leaves updated to: ${leaves} days.<br>• Deduction recalculated: ₹${oldDed} ➔ <strong>₹${newDed}</strong>.<br>• Net Salary: ₹${oldNet.toLocaleString()} ➔ <strong>₹${newNet.toLocaleString()}</strong>.`, 'success');
+        }
+        function fireTrigger2() {
+            // Trigger 2 constraint violation error output simulation
+            showAlert("<strong>SQL Error State [45000]:</strong> BEFORE INSERT trigger blocked query execution.<br><strong style='color:#ef4444;'>Error Details: Salary has already been generated for this employee in the selected month.</strong>", "danger");
+        }
+    </script>
+</body>
+</html>
+
